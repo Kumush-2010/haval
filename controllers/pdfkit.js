@@ -38,7 +38,7 @@ exports.generate_pdf = async (req, res) => {
             page.drawText(text, { x, y, size, font });
 
         // Header
-        drawText(`LIMON-AVTO AVTOMOBIL SOTIB OLISH SHARTNOMA № ${newNumber}`, 50, 750, 14);
+        drawText(`LIMON-AVTO AVTOMOBIL SOTIB OLISH SHARTNOMA No. ${newNumber}`, 50, 750, 14);
         drawText(`_______ shahri`, 50, 730);
         drawText(`"__" __________ 20__ yil`, 400, 730);
 
