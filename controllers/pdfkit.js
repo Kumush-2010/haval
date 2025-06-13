@@ -53,9 +53,14 @@ exports.generate_pdf = async (req, res) => {
         const drawText = (text, x, y, size = 12) =>
             page.drawText(text, { x, y, size, font });
 
+
+        const today = new Date();
+const day = String(today.getDate()).padStart(2, '0');
+const month = String(today.getMonth() + 1).padStart(2, '0'); // 0-based
+const year = today.getFullYear();
         // PDF matn
         drawText(`LIMON-AVTO AVTOMOBIL SOTIB OLISH SHARTNOMA No. ${newNumber}`, 50, 750, 14);
-        drawText(`"__" __________ 20__ yil`, 400, 730);
+        drawText(`"${day}"  ${month}.${year} yil`, 400, 730);
         drawText(`Biz, kim quyida imzo chekib, o‘zaro shartnoma tuzuvchilar bir tomondan "Limon Avto" MChJ nomidan`, 50, 710);
         drawText(`harakat qiluvchi Sotuvchi, va ikkinchi tomondan, xaridor ${fullname} quyidagi`, 50, 690);
         drawText(` shartlarga ko‘ra`, 50, 670);
