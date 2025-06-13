@@ -21,14 +21,13 @@ exports.generate_pdf = async (req, res) => {
             model,
             color,
             engine,
-            transmission,
             payment,
             price,
             userId,
         } = requestBody;
 
         // Ma'lumotlarni tekshirish
-        if (!fullname || !model || !color || !engine || !transmission || !payment || !price || !userId) {
+        if (!fullname || !model || !color || !engine || !payment || !price || !userId) {
             return res.status(400).json({ error: "Barcha maydonlar to‘ldirilishi kerak." });
         }
 
@@ -63,7 +62,7 @@ exports.generate_pdf = async (req, res) => {
         drawText(`Avtomobil nomi: ${model}`, 50, 595);
         drawText(`Rangi: ${color}`, 50, 580);
         drawText(`Dvigatel: ${engine}`, 50, 565);
-        drawText(`Transmissiya: ${transmission}`, 50, 550);
+        // drawText(`Transmissiya: ${}`, 50, 550);
         drawText(`Miqdori: 1 dona`, 50, 535);
         drawText(`Narxi (so‘mda): ${price}`, 50, 520);
         drawText(`Umumiy qiymat: ${price}`, 50, 505);
@@ -132,7 +131,6 @@ exports.generate_pdf = async (req, res) => {
             model,
             color,
             engine,
-            transmission,
             payment,
             price
         });
