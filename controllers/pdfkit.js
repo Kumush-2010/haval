@@ -16,7 +16,7 @@ exports.generate_pdf = async (req, res) => {
 
         const {
             fullname,
-            phone,
+            // phone,
             model,
             color,
             engine,
@@ -87,7 +87,7 @@ exports.generate_pdf = async (req, res) => {
         drawText(`Xaridor:`, 300, 320);
         drawText(`F.I.Sh: ${fullname}`, 300, 305);
         drawText(`Manzil: _________________________`, 300, 290);
-        drawText(`Tel: ${phone}`, 300, 275);
+        // drawText(`Tel: ${phone}`, 300, 275);
         drawText(`H/r: ____________________________`, 300, 260);
         drawText(`MFO: ___________________________`, 300, 245);
         drawText(`INN: ___________________________`, 300, 230);
@@ -130,7 +130,7 @@ exports.generate_pdf = async (req, res) => {
             filename,
             url: urlData.publicUrl,
             fullname,
-            phone,
+            // phone,
             model,
             color,
             engine,
