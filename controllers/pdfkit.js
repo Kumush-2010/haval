@@ -26,7 +26,6 @@ exports.generate_pdf = async (req, res) => {
             userId,
         } = requestBody;
 
-        // Ma'lumotlarni tekshirish
         if (!fullname || !model || !color || !engine || !payment || !price || !userId) {
             return res.status(400).json({ error: "Barcha maydonlar to‘ldirilishi kerak." });
         }
@@ -36,21 +35,19 @@ exports.generate_pdf = async (req, res) => {
             return res.status(500).json({ error: "Supabase bucket nomi topilmadi!" });
         }
 
-        // PDF raqamini aniqlash
         const lastPdf = await PDF.findOne().sort({ number: -1 });
         let lastNumber = Number(lastPdf?.number ?? 0);
         lastNumber = Number.isInteger(lastNumber) ? lastNumber : 0;
         const newNumber = lastNumber + 1;
 
-        // PDF yaratish
         const pdfDoc = await PDFDocument.create();
         const page = pdfDoc.addPage([600, 800]);
         const font = await pdfDoc.embedFont(StandardFonts.TimesRoman);
         const drawText = (text, x, y, size = 12) =>
             page.drawText(text, { x, y, size, font });
 
-        // Matnlar
-        drawText(`LIMON-AVTO AVTOMOBIL SOTIB OLISH SHARTNOMA № ${newNumber}`, 50, 750, 14);
+        // PDF matn yozuvlari
+        drawText(`LIMON-AVTO AVTOMOBIL SOTIB OLISH SHARTNOMA No. ${newNumber}`, 50, 750, 14);
         drawText(`_______ shahri`, 50, 730);
         drawText(`"__" __________ 20__ yil`, 400, 730);
         drawText(`Biz, kim quyida imzo chekib, o‘zaro shartnoma tuzuvchilar bir tomondan`, 50, 710);
@@ -62,7 +59,6 @@ exports.generate_pdf = async (req, res) => {
         drawText(`Avtomobil nomi: ${model}`, 50, 595);
         drawText(`Rangi: ${color}`, 50, 580);
         drawText(`Dvigatel: ${engine}`, 50, 565);
-        // drawText(`Transmissiya: ${}`, 50, 550);
         drawText(`Miqdori: 1 dona`, 50, 535);
         drawText(`Narxi (so‘mda): ${price}`, 50, 520);
         drawText(`Umumiy qiymat: ${price}`, 50, 505);
@@ -101,11 +97,13 @@ exports.generate_pdf = async (req, res) => {
         const filePath = path.join(folderPath, filename);
         await fsPromises.writeFile(filePath, pdfBytes);
 
-        // Faylni Supabase ga yuklash
-        const fileStream = fs.createReadStream(filePath);
+        // Faylni buferga yuklash
+        const fileBuffer = await fsPromises.readFile(filePath);
+
+        // Supabase storage ga yuklash
         const { data, error } = await supabase.storage
             .from(bucketName)
-            .upload(`pdfs/${filename}`, fileStream, {
+            .upload(`pdfs/${filename}`, fileBuffer, {
                 cacheControl: "3600",
                 upsert: false,
                 contentType: "application/pdf"
@@ -117,11 +115,10 @@ exports.generate_pdf = async (req, res) => {
             .from(bucketName)
             .getPublicUrl(`pdfs/${filename}`);
 
-        if (!urlData.publicUrl) {
+        if (!urlData?.publicUrl) {
             return res.status(500).json({ error: "Supabase URL yaratishda xatolik!" });
         }
 
-        // PDF hujjatini DB ga yozish
         const newPdf = await PDF.create({
             userId,
             number: newNumber,
@@ -139,7 +136,6 @@ exports.generate_pdf = async (req, res) => {
             $push: { orders: newPdf.id }
         });
 
-        // Faylni vaqtincha saqlash
         setTimeout(() => {
             fs.unlink(filePath, (err) => {
                 if (err) console.error(`Faylni o‘chirishda xatolik: ${err.message}`);
@@ -153,7 +149,6 @@ exports.generate_pdf = async (req, res) => {
         return res.status(500).json({ error: "PDF yaratishda xatolik yuz berdi." });
     }
 };
-
 
 
 exports.download_pdf = async (req, res) => {
